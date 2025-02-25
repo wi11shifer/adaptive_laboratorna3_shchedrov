@@ -75,12 +75,25 @@ namespace lb3.Controllers
         [HttpGet("async2")]
         public async Task<IActionResult> AsyncExample2()
         {
-            Console.WriteLine("[Async 2] Loading...");
-            await Task.Delay(1500);
-            Console.WriteLine("[Async 2] Data has been loaded.");
+            Console.WriteLine("[Async 2] Starting multiple tasks...");
 
-            return Ok("Async 2 stopped.");
+            Task loadDataTask = Task.Run(async () =>
+            {
+                await Task.Delay(1500);
+                Console.WriteLine("[Async 2] Data has been loaded.");
+            });
+
+            Task processDataTask = Task.Run(async () =>
+            {
+                await Task.Delay(1000);
+                Console.WriteLine("[Async 2] Data has been processed.");
+            });
+
+            await Task.WhenAll(loadDataTask, processDataTask);
+
+            return Ok("Async 2 finished executing multiple tasks.");
         }
+
 
         [HttpGet("async3")]
         public async Task<IActionResult> AsyncExample3()
